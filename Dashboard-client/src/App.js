@@ -1,39 +1,46 @@
-import React from "react"
-import { BrowserRouter, Routes, Route} from "react-router-dom"
+import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-// pages and components
+// Pages and Components
 import Authenticate from "./pages/Authenticate";
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
-import NavBar from "./components/NavBar"
+import NavBar from "./components/NavBar";
 
-// intercepting fetch requests to add the server url and to remove the token if it is expired
+// Intercept fetch requests
 const originalFetch = window.fetch;
-window.fetch =async function (resource, init) {
-  const serverUrl = "https://memo-master-server-7c0b3fe9dbce.herokuapp.com/";
-  arguments[0] = `${serverUrl}${resource}`;
-  const response = await originalFetch.apply(this, arguments);
-  if (response.status === 401 ) {
-    localStorage.removeItem("user")
+
+window.fetch = async function (resource, init) {
+  // Local backend
+  const serverUrl = "http://localhost:5000/";
+
+  // If the URL is already absolute, don't modify it
+  if (!resource.startsWith("http")) {
+    resource = serverUrl + resource.replace(/^\//, "");
+  }
+
+  const response = await originalFetch(resource, init);
+
+  // Logout if token expired
+  if (response.status === 401) {
+    localStorage.removeItem("user");
     window.location.href = "/";
   }
 
   return response;
 };
 
-// main App component
+// Main App Component
 function App() {
   return (
     <div className="App">
       <BrowserRouter>
-        <div >
-          <NavBar /> 
-          <Routes>
-            <Route path="*" element={<NotFound />} />
-            <Route path="/" element={<Authenticate />} />
-            <Route path="/home" element={<Home />} />
-          </Routes>
-        </div>
+        <NavBar />
+        <Routes>
+          <Route path="/" element={<Authenticate />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
       </BrowserRouter>
     </div>
   );
