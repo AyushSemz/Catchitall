@@ -1,0 +1,13 @@
+{
+  "name": "dashboard",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://itaibenjy.github.io/Dashboard-Web/",
+  "main": "Dashboard-server/app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npm install --prefix ./Dashboard-Server && node Dashboard-Server/app.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
